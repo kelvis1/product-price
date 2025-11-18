@@ -6,11 +6,8 @@ export default function CardProduto({ onAdd }) {
     const [preco, setPreco] = useState("");
     const [quantidade, setQuantidade] = useState("");
 
-    function adicionarProduto() {
-        const novoProduto = { nome, preco, quantidade };
-        onAdd(novoProduto);
-        
-        
+    function handleSubmit() {
+        onAdd({ nome, preco, quantidade});
 
         setNome("");
         setPreco("");
@@ -30,21 +27,21 @@ export default function CardProduto({ onAdd }) {
 
                 <Box mb={2}>
                     <Typography>Nome do Produto</Typography>
-                    <TextField fullWidth size="small" placeholder="Ex: Arroz" value={nome} onChange={(e) => setNome(e.target.value)} />
+                    <TextField fullWidth size="small" placeholder="Ex: Arroz" label="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
                 </Box>
 
                 <Box mb={2}>
                     <Typography>Preço</Typography>
-                    <TextField fullWidth size="small" placeholder="Ex: R$0.00" type="number" value={preco} onChange={(e) => setPreco(e.target.value)} />
+                    <TextField fullWidth size="small" placeholder="Ex: R$0.00" type="number" label="Preço" value={preco} onChange={(e) => setPreco(e.target.value)} />
                 </Box>
 
                 <Box mb={2}>
                     <Typography>Quantidade</Typography>
-                    <TextField fullWidth size="small" placeholder="Ex: 1" type="number" value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
+                    <TextField fullWidth size="small" placeholder="Ex: 1" type="number" label="Quantidade" value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
                 </Box>
 
                 <Button sx={{ borderRadius: 2, backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333", } }}
-                    variant="contained" fullWidth onClick={adicionarProduto}>
+                    variant="contained" fullWidth onClick={handleSubmit}>
                     + Adicionar Produto
                 </Button>
 

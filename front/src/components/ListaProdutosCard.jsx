@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ListaProdutosCard({ produtos, onUpdate, onRemove }) {
     return (
-        <Card sx={{ width: "100%", padding: 2, marginTop: 15, borderRadius: 3 }}>
+        <Card sx={{ width: "90%", padding: 2, marginTop: 15, borderRadius: 3 }}>
             <CardContent>
                 <Typography variant="h6" fontWeight="bold" mb={1}>
                     Lista de Produtos
@@ -23,8 +23,8 @@ export default function ListaProdutosCard({ produtos, onUpdate, onRemove }) {
 
                 <Box sx={{ borderBottom: "1px solid #ddd", mb: 1 }} />
 
-                {produtos.map((p, index) => (
-                    <Box key={index}
+                {produtos.map((p) => (
+                    <Box key={p.id}
                         display="grid"
                         gridTemplateColumns="1fr 120px 80px 120px 60px"
                         alignItems="center"
@@ -35,25 +35,24 @@ export default function ListaProdutosCard({ produtos, onUpdate, onRemove }) {
                         <TextField type="number"
                             size="small"
                             value={p.preco}
-                            onChange={(e) => onUpdate(index, "preco", e.target.value)}
+                            onChange={(e) => onUpdate(p.id, "preco", e.target.value)}
                             sx={{ backgroundColor: "#f2f2f2", width: "100px" }}
                         />
                         <TextField
                             type="number"
                             size="small"
                             value={p.quantidade}
-                            onChange={(e) => onUpdate(index, "quantidade", e.target.value)}
+                            onChange={(e) => onUpdate(p.id, "quantidade", e.target.value)}
                             sx={{ backgroundColor: "#f2f2f2", width: "70px" }}
                         />
                         <Typography sx={{ color: "green", fontWeight: "bold" }}>
                             R$ {(p.preco * p.quantidade).toFixed(2)}
                         </Typography>
-                        <IconButton color="error" onClick={() => onRemove(index)}>
+                        <IconButton color="error" onClick={() => onRemove(p.id)}>
                             <DeleteIcon />
                         </IconButton>
                     </Box>
                 ))}
-
             </CardContent>
         </Card>
     );
