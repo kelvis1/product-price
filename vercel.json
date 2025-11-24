@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "front/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "build" }
+    },
+    {
+      "src": "back/api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "back/api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "front/$1"
+    }
+  ],
+  "installCommand": "npm install --prefix front && npm install --prefix back"
+}
