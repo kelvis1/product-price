@@ -1,5 +1,7 @@
 import { Box, Card, CardContent, IconButton, TextField, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useState } from "react";
+
 
 export default function ListaProdutosCard({ produtos, onUpdate, onRemove }) {
     return (

@@ -58,7 +58,7 @@ export default function ResumoCard({ produtos, itens, valor }) {
                         }}
                     >
                         <AttachMoneyIcon sx={{ color: "#00a152", fontSize: 24, marginRight: "8px" }} />
-                        <Typography variant="body1">Valor Total: <strong> {valor}</strong></Typography>
+                        <Typography variant="body1">Valor Total: <strong> R$ {valor.toFixed(2)}</strong></Typography>
                     </Box>
                 </Box>
             </CardContent>

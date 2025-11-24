@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     async function load() {
-      const res = await fetch("http://localhost:4000/products");
+      const res = await fetch("http://localhost:8000/products");
       const data = await res.json();
       setProdutos(data);
     }
@@ -18,7 +18,7 @@ function App() {
   }, []);
 
   async function adicionarProduto(produto) {
-    const res = await fetch("http://localhost:4000/products", {
+    const res = await fetch("http://localhost:8000/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(produto),
@@ -30,68 +30,67 @@ function App() {
   }
 
   async function editarProduto(id, updates) {
-    const res = await fetch(`http://localhost:4000/products/${id}`, {
+    const res = await fetch(`http://localhost:8000/products/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    
+
     const atualizado = await res.json();
 
-    setProdutos((prev) => 
+    setProdutos((prev) =>
       prev.map((p) => (p.id === id ? atualizado : p))
     );
   }
 
   async function deletarProduto(id) {
-    await fetch(`http://localhost:4000/products/${id}`, {
+    await fetch(`http://localhost:8000/products/${id}`, {
       method: "DELETE",
     });
 
     setProdutos((prev) => prev.filter((p) => p.id !== id));
   }
 
-  function adiconarProduto(produto) {
-    setProdutos((prev) => [...prev, produto]);
-  }
-
-  function atualizarProduto(index, campo, valor) {
-    const lista = [...produtos];
-    lista[index][campo] = valor;
-    setProdutos(lista);
-  }
-
-  function removeProduto(index) {
-    const lista = produtos.filter((_, i) => i !== index);
-    setProdutos(lista);
-  }
-
-  const totalProdutos = produtos.length; 
-  const totalItens = produtos.reduce((acc, p) => acc + Number(p.quantidade), 0);
-  const valorTotal = produtos.reduce((acc, p) => acc + Number(p.preco) * Number(p.quantidade), 0);
+  const totalProdutos = produtos.length;
+  const totalItens = produtos.reduce(
+    (acc, p) => acc + Number(p.quantidade),
+    0
+  );
+  const valorTotal = produtos.reduce(
+    (acc, p) => acc + Number(p.preco) * Number(p.quantidade),
+    0
+  );
 
   return (
-   <>
-   <Box sx={{ minHeight: "110vh", backgroundColor: "#eff6ff"}}>
-    <Box display="flex" gap={3} padding={2}>
-    <Box width="35%">
-      <Header />
-      <div>
-        <CardProduto onAdd={adicionarProduto} />
-        <ResumoCard produtos={totalProdutos} itens={totalItens} valor={valorTotal} />
-      </div>
+    <>
+      <Box sx={{ minHeight: "110vh", backgroundColor: "#eff6ff" }}>
+        <Box display="flex" gap={3} padding={2}>
+          
+          <Box width="35%">
+            <Header />
+            <div>
+              <CardProduto onAdd={adicionarProduto} />
+              <ResumoCard
+                produtos={totalProdutos}
+                itens={totalItens}
+                valor={valorTotal}
+              />
+            </div>
+          </Box>
+
+          <Box width="65%">
+            <ListaProdutosCard
+              produtos={produtos}
+              onUpdate={(id, campo, valor) =>
+                editarProduto(id, { [campo]: Number(valor) })
+              }
+              onRemove={deletarProduto}
+            />
+          </Box>
+
+        </Box>
       </Box>
-    <Box width="65%">
-      <ListaProdutosCard 
-        produtos={produtos} 
-        onUpdate={atualizarProduto} 
-        onRemove={removeProduto}
-      />
-    </Box>
-    </Box>
-    </Box>
-    
-   </>
+    </>
   );
 }
 

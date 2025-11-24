@@ -21,26 +21,27 @@ CREATE TABLE IF NOT EXISTS products (
 );
 `);
 
-// --- ROTAS --- //
+// ---------------------- ROTAS ---------------------- //
 
-// Listar todos
+// Listar todos os produtos
 app.get("/products", (req, res) => {
   const stmt = db.prepare("SELECT * FROM products");
   const rows = stmt.all();
   res.json(rows);
 });
 
-// Buscar 1
+// Buscar um produto específico
 app.get("/products/:id", (req, res) => {
   const stmt = db.prepare("SELECT * FROM products WHERE id = ?");
   const product = stmt.get(req.params.id);
 
-  if (!product) return res.status(404).json({ error: "Produto não encontrado" });
+  if (!product)
+    return res.status(404).json({ error: "Produto não encontrado" });
 
   res.json(product);
 });
 
-// Criar
+// Criar novo produto
 app.post("/products", (req, res) => {
   const { nome, preco, quantidade } = req.body;
 
@@ -52,9 +53,9 @@ app.post("/products", (req, res) => {
   const createdAt = new Date().toISOString();
 
   const stmt = db.prepare(`
-    INSERT INTO products (id, nome, preco, quantidade, createdAt)
-    VALUES (?, ?, ?, ?, ?)
-  `);
+      INSERT INTO products (id, nome, preco, quantidade, createdAt)
+      VALUES (?, ?, ?, ?, ?)
+    `);
 
   stmt.run(id, nome, Number(preco), Number(quantidade), createdAt);
 
@@ -67,47 +68,58 @@ app.post("/products", (req, res) => {
   });
 });
 
-// Atualizar
+// Atualizar produto (nome opcional)
 app.put("/products/:id", (req, res) => {
+  const id = req.params.id;
   const { nome, preco, quantidade } = req.body;
-  const { id } = req.params;
 
-  const check = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
-  if (!check) return res.status(404).json({ error: "Produto não encontrado" });
+  // Verifica se existe
+  const findStmt = db.prepare("SELECT * FROM products WHERE id = ?");
+  const produto = findStmt.get(id);
 
-  const stmt = db.prepare(`
-    UPDATE products
-    SET nome = COALESCE(?, nome),
-        preco = COALESCE(?, preco),
-        quantidade = COALESCE(?, quantidade)
-    WHERE id = ?
-  `);
+  if (!produto)
+    return res.status(404).json({ error: "Produto não encontrado" });
 
-  stmt.run(
-    nome !== undefined ? nome : null,
-    preco !== undefined ? Number(preco) : null,
-    quantidade !== undefined ? Number(quantidade) : null,
+  // Atualização parcial usando COALESCE
+  const updateStmt = db.prepare(`
+      UPDATE products
+      SET nome = COALESCE(?, nome),
+          preco = COALESCE(?, preco),
+          quantidade = COALESCE(?, quantidade)
+      WHERE id = ?
+    `);
+
+  updateStmt.run(
+    nome ?? null,
+    preco ?? null,
+    quantidade ?? null,
     id
   );
 
-  const updated = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+  // Retorna produto atualizado
+  const updatedStmt = db.prepare("SELECT * FROM products WHERE id = ?");
+  const atualizado = updatedStmt.get(id);
 
-  res.json(updated);
+  res.json(atualizado);
 });
 
-// Deletar
+// Remover produto
 app.delete("/products/:id", (req, res) => {
-  const stmt = db.prepare("DELETE FROM products WHERE id = ?");
-  const result = stmt.run(req.params.id);
+  const id = req.params.id;
+
+  const deleteStmt = db.prepare("DELETE FROM products WHERE id = ?");
+  const result = deleteStmt.run(id);
 
   if (result.changes === 0) {
     return res.status(404).json({ error: "Produto não encontrado" });
   }
 
-  res.status(204).end();
+  res.json({ message: "Produto removido" });
 });
 
-const PORT = 4000;
+// Porta 8000 (para combinar com seu frontend)
+const PORT = 8000;
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando com SQLite em http://localhost:${PORT}`);
 });
